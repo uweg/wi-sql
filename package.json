@@ -1,0 +1,25 @@
+{
+  "name": "wi-sql",
+  "version": "0.0.22",
+  "description": "",
+  "main": "dist/wi-sql.js",
+  "files": [
+    "dist",
+    "declarations"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "typings": "declarations/src/lib.d.ts",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "jest": "^25.3.0",
+    "ts-jest": "^25.3.1",
+    "ts-loader": "^6.2.2",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  }
+}
