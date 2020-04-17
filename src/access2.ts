@@ -207,7 +207,7 @@ export function listQuery<T extends Model>(
   result += "\n";
 
   // FROM
-  result += `FROM ${info.join.map(() => "(")}\n  ${
+  result += `FROM ${info.join.map(() => "(").join("")}\n  ${
     accessInfo[info.from].name
   } AS ${info.from}`;
 

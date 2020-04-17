@@ -1,6 +1,6 @@
 {
   "name": "wi-sql",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "",
   "main": "dist/wi-sql.js",
   "files": [

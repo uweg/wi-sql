@@ -29,6 +29,7 @@ test("join", () => {
   const res = query(context)
     .from("bar")
     .innerJoin("foo", "as", "b", "=", "bar", "one")
+    .leftJoin("foo", "as2", "b", "=", "as", "b")
     .select("bar", ["one"])
     .select("as", ["a"]);
 
@@ -36,9 +37,10 @@ test("join", () => {
     `SELECT
   bar.c_one AS bar__one,
   as.c_a AS as__a
-FROM (
+FROM ((
   t_bar AS bar
-  INNER JOIN t_foo AS as ON as.c_b = bar.c_one)`
+  INNER JOIN t_foo AS as ON as.c_b = bar.c_one)
+  LEFT JOIN t_foo AS as2 ON as2.c_b = as.c_b)`
   );
 });
 
