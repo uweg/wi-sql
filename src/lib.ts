@@ -17,4 +17,6 @@ export { DeleteWhere } from "./remove/where";
 
 export { Select, WithSelect } from "./read/select";
 
-export { Union, WithUnion} from './read/union'
+export { Union, WithUnion } from "./read/union";
+
+export { WithDistinct, Distinct } from "./read/distinct";

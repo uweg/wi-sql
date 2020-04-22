@@ -13,10 +13,10 @@ export class WithDistinct<
   }
 }
 
-class Distinct<TModel extends Model, TSelected extends Model> extends Read<
+export class Distinct<TModel extends Model, TSelected extends Model> extends Read<
   Model,
   TSelected
 > {}
-interface Distinct<TModel extends Model, TSelected extends Model>
+export interface Distinct<TModel extends Model, TSelected extends Model>
   extends WithOrderBy<TModel, TSelected> {}
 applyMixins(Distinct, [WithOrderBy]);
