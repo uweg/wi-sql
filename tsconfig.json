@@ -9,5 +9,5 @@
     "declarationDir": "declarations",
     "lib": ["ES2015", "DOM"]
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "declarations"]
 }

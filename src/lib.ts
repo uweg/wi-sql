@@ -2,6 +2,7 @@ export {
   access,
   IntColumn as AccessIntColumn,
   StringColumn as AccessStringColumn,
+  NullableStringColumn as AccessNullableStringColumn,
   ColumnBase as AccessColumnBase,
   Connection as AccessConnection,
   ExtractModel as AccessExtractModel,

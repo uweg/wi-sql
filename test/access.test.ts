@@ -7,6 +7,7 @@ import {
   access,
   Connection,
   countQuery,
+  ExtractModel,
 } from "../src/access2";
 import { model } from "./model2";
 
@@ -62,6 +63,20 @@ WHERE
   AND [as].[c_a] = 1`);
 });
 
+test("where null", () => {
+  const req = query(context)
+    .from("bar")
+    .where("bar", "one", "=", null)
+    .select("bar", ["one"]);
+
+  expect(listQuery(req.getInfo(), model)).toEqual(`SELECT
+  [bar].[c_one] AS [bar__one]
+FROM 
+  [t_bar] AS [bar]
+WHERE
+  [bar].[c_one] IS NULL`);
+});
+
 test("distinct", () => {
   const req = query(context).from("bar").select("bar", ["one"]).distinct();
 
@@ -108,12 +123,12 @@ test("delete", () => {
   const req = query(context)
     .delete("foo")
     .where("a", "=", 1)
-    .where("b", "<>", "1");
+    .where("b", "<>", null);
 
   expect(deleteQuery(req.getInfo(), model)).toEqual(`DELETE FROM [t_foo]
 WHERE
   [c_a] = 1
-  AND [c_b] <> '1';`);
+  AND [c_b] IS NOT NULL;`);
 });
 
 test("insert", () => {
@@ -137,7 +152,7 @@ test("update", () => {
       a: 1,
       b: "d",
     })
-    .where("b", "=", "a")
+    .where("b", "=", null)
     .where("a", "=", 1);
 
   expect(updateQuery(req.getInfo(), model)).toEqual(`UPDATE [t_foo]
@@ -145,7 +160,7 @@ SET
   [c_a] = 1,
   [c_b] = 'd'
 WHERE
-  [c_b] = 'a'
+  [c_b] IS NULL
   AND [c_a] = 1;`);
 });
 

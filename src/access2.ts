@@ -22,6 +22,12 @@ export class StringColumn extends ColumnBase<string> {
   }
 }
 
+export class NullableStringColumn extends ColumnBase<string | null> {
+  toSqlString(value: string | null) {
+    return typeof value === "string" ? `'${value.replace("'", "''")}'` : "";
+  }
+}
+
 export class IntColumn extends ColumnBase<number> {
   toSqlString(value: number) {
     return value.toString();
@@ -103,14 +109,19 @@ export function updateQuery<T extends Model>(
     )
     .join(",");
 
-  const wheres = info.where.map(
-    (where) =>
-      `[${accessInfo[info.update.table].columns[where.column].name}] ${
-        where.comparator
-      } ${accessInfo[info.update.table].columns[where.column].toSqlString(
-        where.value
-      )}`
-  );
+  const wheres = info.where.map((where) => {
+    let r = `[${accessInfo[info.update.table].columns[where.column].name}] `;
+
+    if (where.value === null) {
+      r += `IS${where.comparator === "=" ? "" : " NOT"} NULL`;
+    } else {
+      r += `${where.comparator} ${accessInfo[info.update.table].columns[
+        where.column
+      ].toSqlString(where.value)}`;
+    }
+
+    return r;
+  });
 
   result += `\nWHERE\n  ${wheres[0]}`;
 
@@ -155,14 +166,19 @@ export function deleteQuery<T extends Model>(
 ) {
   let result = `DELETE FROM [${accessInfo[info._delete].name}]\nWHERE`;
 
-  const wheres = info.where.map(
-    (where) =>
-      `[${accessInfo[info._delete].columns[where.column].name}] ${
-        where.comparator
-      } ${accessInfo[info._delete].columns[where.column].toSqlString(
-        where.value
-      )}`
-  );
+  const wheres = info.where.map((where) => {
+    let r = `[${accessInfo[info._delete].columns[where.column].name}] `;
+
+    if (where.value === null) {
+      r += `IS${where.comparator === "=" ? "" : " NOT"} NULL`;
+    } else {
+      r += `${where.comparator} ${accessInfo[info._delete].columns[
+        where.column
+      ].toSqlString(where.value)}`;
+    }
+
+    return r;
+  });
 
   result += `\n  ${wheres[0]}`;
   for (const where of wheres.slice(1)) {
@@ -244,11 +260,19 @@ export function listQuery<T extends Model>(
         table = withAs.tableLeft;
       }
 
-      return `[${where.table}].[${
+      let r = `[${where.table}].[${
         accessInfo[table].columns[where.column].name
-      }] ${where.comparator} ${accessInfo[table].columns[
-        where.column
-      ].toSqlString(where.value)}`;
+      }] `;
+
+      if (where.value === null) {
+        r += `IS${where.comparator === "=" ? "" : " NOT"} NULL`;
+      } else {
+        r += `${where.comparator} ${accessInfo[table].columns[
+          where.column
+        ].toSqlString(where.value)}`;
+      }
+
+      return r;
     });
 
     result += `\n  ${wheres[0]}`;
