@@ -91,13 +91,13 @@ export function updateQuery<T extends Model>(
   info: UpdateInfo<T>,
   accessInfo: AccessInfo<T>
 ) {
-  let result = `UPDATE ${accessInfo[info.update.table].name}\nSET`;
+  let result = `UPDATE [${accessInfo[info.update.table].name}]\nSET`;
   result += Object.keys(info.update.values)
     .map(
       (column) =>
-        `\n  ${
+        `\n  [${
           accessInfo[info.update.table].columns[column].name
-        } = ${accessInfo[info.update.table].columns[column].toSqlString(
+        }] = ${accessInfo[info.update.table].columns[column].toSqlString(
           info.update.values[column]
         )}`
     )
@@ -105,7 +105,7 @@ export function updateQuery<T extends Model>(
 
   const wheres = info.where.map(
     (where) =>
-      `${accessInfo[info.update.table].columns[where.column].name} ${
+      `[${accessInfo[info.update.table].columns[where.column].name}] ${
         where.comparator
       } ${accessInfo[info.update.table].columns[where.column].toSqlString(
         where.value
@@ -127,10 +127,10 @@ export function insertQuery<T extends Model>(
   info: CreateInfo<T>,
   accessInfo: AccessInfo<T>
 ) {
-  let result = `INSERT INTO ${accessInfo[info.insert.table].name} (`;
+  let result = `INSERT INTO [${accessInfo[info.insert.table].name}] (`;
   result += Object.keys(info.insert.values)
     .map(
-      (column) => `\n  ${accessInfo[info.insert.table].columns[column].name}`
+      (column) => `\n  [${accessInfo[info.insert.table].columns[column].name}]`
     )
     .join(",");
 
@@ -153,11 +153,11 @@ export function deleteQuery<T extends Model>(
   info: RemoveInfo<T>,
   accessInfo: AccessInfo<T>
 ) {
-  let result = `DELETE FROM ${accessInfo[info._delete].name}\nWHERE`;
+  let result = `DELETE FROM [${accessInfo[info._delete].name}]\nWHERE`;
 
   const wheres = info.where.map(
     (where) =>
-      `${accessInfo[info._delete].columns[where.column].name} ${
+      `[${accessInfo[info._delete].columns[where.column].name}] ${
         where.comparator
       } ${accessInfo[info._delete].columns[where.column].toSqlString(
         where.value
@@ -204,7 +204,7 @@ export function listQuery<T extends Model>(
             table = withAs.tableLeft;
           }
 
-          return `  ${s.table}.${accessInfo[table].columns[c].name} AS ${s.table}__${c}`;
+          return `  [${s.table}].[${accessInfo[table].columns[c].name}] AS [${s.table}__${c}]`;
         })
         .join(",\n")
     )
@@ -212,9 +212,9 @@ export function listQuery<T extends Model>(
   result += "\n";
 
   // FROM
-  result += `FROM ${info.join.map(() => "(").join("")}\n  ${
+  result += `FROM ${info.join.map(() => "(").join("")}\n  [${
     accessInfo[info.from].name
-  } AS ${info.from}`;
+  }] AS [${info.from}]`;
 
   // JOIN
   for (const join of info.join) {
@@ -224,13 +224,13 @@ export function listQuery<T extends Model>(
       table = withAs.tableLeft;
     }
 
-    result += `\n  ${join.type === "inner" ? "INNER" : "LEFT"} JOIN ${
+    result += `\n  ${join.type === "inner" ? "INNER" : "LEFT"} JOIN [${
       accessInfo[join.tableLeft].name
-    } AS ${join.as} ON ${join.as}.${
+    }] AS [${join.as}] ON [${join.as}].[${
       accessInfo[join.tableLeft].columns[join.columnLeft].name
-    } ${join.comparator} ${join.tableRight}.${
+    }] ${join.comparator} [${join.tableRight}].[${
       accessInfo[table].columns[join.columnRight].name
-    })`;
+    }])`;
   }
 
   // WHERE
@@ -244,9 +244,11 @@ export function listQuery<T extends Model>(
         table = withAs.tableLeft;
       }
 
-      return `${where.table}.${accessInfo[table].columns[where.column].name} ${
-        where.comparator
-      } ${accessInfo[table].columns[where.column].toSqlString(where.value)}`;
+      return `[${where.table}].[${
+        accessInfo[table].columns[where.column].name
+      }] ${where.comparator} ${accessInfo[table].columns[
+        where.column
+      ].toSqlString(where.value)}`;
     });
 
     result += `\n  ${wheres[0]}`;
@@ -265,18 +267,18 @@ export function listQuery<T extends Model>(
       result = `SELECT TOP ${info.paginate.limit} * FROM (
 SELECT TOP ${info.paginate.offset + info.paginate.limit} * FROM (
 ${result}
-) ORDER BY ${info.orderBy.table}__${info.orderBy.column} ${
+) ORDER BY [${info.orderBy.table}__${info.orderBy.column}] ${
         info.orderBy.direction === "asc" ? "ASC" : "DESC"
       }
-) ORDER BY ${info.orderBy.table}__${info.orderBy.column} ${
+) ORDER BY [${info.orderBy.table}__${info.orderBy.column}] ${
         info.orderBy.direction === "asc" ? "DESC" : "ASC"
       }`;
     }
 
     // ORDER BY
-    result = `SELECT * FROM (\n${result}\n) ORDER BY ${info.orderBy.table}__${
+    result = `SELECT * FROM (\n${result}\n) ORDER BY [${info.orderBy.table}__${
       info.orderBy.column
-    } ${info.orderBy.direction === "asc" ? "ASC" : "DESC"}`;
+    }] ${info.orderBy.direction === "asc" ? "ASC" : "DESC"}`;
   }
 
   return result;

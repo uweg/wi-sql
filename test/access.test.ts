@@ -19,9 +19,9 @@ test("select", () => {
 
   expect(listQuery(res.getInfo(), model)).toEqual(
     `SELECT
-  bar.c_one AS bar__one
+  [bar].[c_one] AS [bar__one]
 FROM 
-  t_bar AS bar`
+  [t_bar] AS [bar]`
   );
 });
 
@@ -35,12 +35,12 @@ test("join", () => {
 
   expect(listQuery(res.getInfo(), model)).toEqual(
     `SELECT
-  bar.c_one AS bar__one,
-  as.c_a AS as__a
+  [bar].[c_one] AS [bar__one],
+  [as].[c_a] AS [as__a]
 FROM ((
-  t_bar AS bar
-  INNER JOIN t_foo AS as ON as.c_b = bar.c_one)
-  LEFT JOIN t_foo AS as2 ON as2.c_b = as.c_b)`
+  [t_bar] AS [bar]
+  INNER JOIN [t_foo] AS [as] ON [as].[c_b] = [bar].[c_one])
+  LEFT JOIN [t_foo] AS [as2] ON [as2].[c_b] = [as].[c_b])`
   );
 });
 
@@ -53,22 +53,22 @@ test("where", () => {
     .select("bar", ["one"]);
 
   expect(listQuery(req.getInfo(), model)).toEqual(`SELECT
-  bar.c_one AS bar__one
+  [bar].[c_one] AS [bar__one]
 FROM (
-  t_bar AS bar
-  INNER JOIN t_foo AS as ON as.c_b = bar.c_one)
+  [t_bar] AS [bar]
+  INNER JOIN [t_foo] AS [as] ON [as].[c_b] = [bar].[c_one])
 WHERE
-  bar.c_one <> 'value'
-  AND as.c_a = 1`);
+  [bar].[c_one] <> 'value'
+  AND [as].[c_a] = 1`);
 });
 
 test("distinct", () => {
   const req = query(context).from("bar").select("bar", ["one"]).distinct();
 
   expect(listQuery(req.getInfo(), model)).toEqual(`SELECT DISTINCT
-  bar.c_one AS bar__one
+  [bar].[c_one] AS [bar__one]
 FROM 
-  t_bar AS bar`);
+  [t_bar] AS [bar]`);
 });
 
 test("orderBy", () => {
@@ -79,10 +79,10 @@ test("orderBy", () => {
 
   expect(listQuery(req.getInfo(), model)).toEqual(`SELECT * FROM (
 SELECT
-  bar.c_one AS bar__one
+  [bar].[c_one] AS [bar__one]
 FROM 
-  t_bar AS bar
-) ORDER BY bar__one DESC`);
+  [t_bar] AS [bar]
+) ORDER BY [bar__one] DESC`);
 });
 
 test("paginate", () => {
@@ -96,12 +96,12 @@ test("paginate", () => {
 SELECT TOP 5 * FROM (
 SELECT TOP 15 * FROM (
 SELECT
-  bar.c_one AS bar__one
+  [bar].[c_one] AS [bar__one]
 FROM 
-  t_bar AS bar
-) ORDER BY bar__one DESC
-) ORDER BY bar__one ASC
-) ORDER BY bar__one DESC`);
+  [t_bar] AS [bar]
+) ORDER BY [bar__one] DESC
+) ORDER BY [bar__one] ASC
+) ORDER BY [bar__one] DESC`);
 });
 
 test("delete", () => {
@@ -110,10 +110,10 @@ test("delete", () => {
     .where("a", "=", 1)
     .where("b", "<>", "1");
 
-  expect(deleteQuery(req.getInfo(), model)).toEqual(`DELETE FROM t_foo
+  expect(deleteQuery(req.getInfo(), model)).toEqual(`DELETE FROM [t_foo]
 WHERE
-  c_a = 1
-  AND c_b <> '1';`);
+  [c_a] = 1
+  AND [c_b] <> '1';`);
 });
 
 test("insert", () => {
@@ -122,9 +122,9 @@ test("insert", () => {
     b: "a",
   });
 
-  expect(insertQuery(req.getInfo(), model)).toEqual(`INSERT INTO t_foo (
-  c_a,
-  c_b
+  expect(insertQuery(req.getInfo(), model)).toEqual(`INSERT INTO [t_foo] (
+  [c_a],
+  [c_b]
 ) VALUES (
   1,
   'a'
@@ -140,13 +140,13 @@ test("update", () => {
     .where("b", "=", "a")
     .where("a", "=", 1);
 
-  expect(updateQuery(req.getInfo(), model)).toEqual(`UPDATE t_foo
+  expect(updateQuery(req.getInfo(), model)).toEqual(`UPDATE [t_foo]
 SET
-  c_a = 1,
-  c_b = 'd'
+  [c_a] = 1,
+  [c_b] = 'd'
 WHERE
-  c_b = 'a'
-  AND c_a = 1;`);
+  [c_b] = 'a'
+  AND [c_a] = 1;`);
 });
 
 test("count", () => {
@@ -155,9 +155,9 @@ test("count", () => {
   expect(countQuery(res.getInfo(), model)).toEqual(
     `SELECT COUNT(*) AS result FROM (
 SELECT
-  bar.c_one AS bar__one
+  [bar].[c_one] AS [bar__one]
 FROM 
-  t_bar AS bar
+  [t_bar] AS [bar]
 )`
   );
 });
@@ -170,14 +170,14 @@ test("union", () => {
 
   expect(listQuery(res.getInfo(), model)).toEqual(
     `SELECT
-  bar.c_one AS bar__one
+  [bar].[c_one] AS [bar__one]
 FROM 
-  t_bar AS bar
+  [t_bar] AS [bar]
 UNION (
 SELECT
-  bar.c_one AS bar__one
+  [bar].[c_one] AS [bar__one]
 FROM 
-  t_bar AS bar
+  [t_bar] AS [bar]
 )`
   );
 });
