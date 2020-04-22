@@ -41,7 +41,7 @@ export interface Select<
 >
   extends WithSelect<TModel, T, TSelected>,
     WithOrderBy<TModel, TSelected>,
-    WithDistinct<TModel, TSelected>,
+    WithDistinct<TModel, T, TSelected>,
     WithUnion<TModel, T, TSelected> {}
 
 applyMixins(Select, [WithSelect, WithOrderBy, WithDistinct, WithUnion]);
