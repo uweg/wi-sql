@@ -11,7 +11,7 @@ export class WithJoin<TModel extends Model, T extends Model> extends WithInfo<
   ReadInfo<TModel>
 > {
   innerJoin<
-    TTableLeft extends Extract<keyof Omit<TModel, keyof T>, string>,
+    TTableLeft extends Extract<keyof TModel, string>,
     TColumnLeft extends Extract<keyof TModel[TTableLeft], string>,
     TTableRight extends Extract<keyof T, string>,
     TColumnRight extends Extract<keyof T[TTableRight], string>,
@@ -51,7 +51,7 @@ export class WithJoin<TModel extends Model, T extends Model> extends WithInfo<
   }
 
   leftJoin<
-    TTableLeft extends Extract<keyof Omit<TModel, keyof T>, string>,
+    TTableLeft extends Extract<keyof TModel, string>,
     TColumnLeft extends Extract<keyof TModel[TTableLeft], string>,
     TTableRight extends Extract<keyof T, string>,
     TColumnRight extends Extract<keyof T[TTableRight], string>,

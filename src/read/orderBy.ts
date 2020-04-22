@@ -6,12 +6,11 @@ import { ReadInfo, Read } from "./read";
 
 export class WithOrderBy<
   TModel extends Model,
-  T extends Model,
   TSelected extends Model
 > extends WithInfo<TModel, ReadInfo<TModel>> {
   orderBy<
-    TTable extends Extract<keyof T, string>,
-    TColumn extends Extract<keyof T[TTable], string>
+    TTable extends Extract<keyof TSelected, string>,
+    TColumn extends Extract<keyof TSelected[TTable], string>
   >(
     table: TTable,
     column: TColumn,

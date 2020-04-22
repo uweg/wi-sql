@@ -20,6 +20,7 @@ export class WithFrom<TModel extends Model> {
       paginate: null,
       select: [],
       where: [],
+      union: null,
     });
   }
 }

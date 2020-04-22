@@ -161,3 +161,23 @@ FROM
 )`
   );
 });
+
+test("union", () => {
+  const res = query(context)
+    .from("bar")
+    .select("bar", ["one"])
+    .union((q) => q.from("bar").select("bar", ["one"]));
+
+  expect(listQuery(res.getInfo(), model)).toEqual(
+    `SELECT
+  bar.c_one AS bar__one
+FROM 
+  t_bar AS bar
+UNION (
+SELECT
+  bar.c_one AS bar__one
+FROM 
+  t_bar AS bar
+)`
+  );
+});

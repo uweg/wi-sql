@@ -11,6 +11,7 @@ test("from", () => {
     orderBy: null,
     distinct: false,
     paginate: null,
+    union: null,
   });
 });
 
@@ -25,6 +26,7 @@ test("select", () => {
       orderBy: null,
       distinct: false,
       paginate: null,
+      union: null,
     }
   );
 });
@@ -50,6 +52,7 @@ test("innerJoin", () => {
     orderBy: null,
     distinct: false,
     paginate: null,
+    union: null,
   });
 });
 
@@ -74,6 +77,7 @@ test("leftJoin", () => {
     orderBy: null,
     distinct: false,
     paginate: null,
+    union: null,
   });
 });
 
@@ -88,21 +92,23 @@ test("where", () => {
       orderBy: null,
       distinct: false,
       paginate: null,
+      union: null,
     }
   );
 });
 
 test("orderBy", () => {
   expect(
-    query(context).from("foo").select("foo", ["a"]).orderBy("foo", "b", "asc")
+    query(context).from("foo").select("foo", ["a"]).orderBy("foo", "a", "asc")
   ).toHaveProperty("info", {
     from: "foo",
     select: [{ table: "foo", columns: ["a"] }],
     join: [],
     where: [],
-    orderBy: { table: "foo", column: "b", direction: "asc" },
+    orderBy: { table: "foo", column: "a", direction: "asc" },
     distinct: false,
     paginate: null,
+    union: null,
   });
 });
 
@@ -117,6 +123,7 @@ test("distinct", () => {
     orderBy: null,
     distinct: true,
     paginate: null,
+    union: null,
   });
 });
 
@@ -125,16 +132,17 @@ test("paginate", () => {
     query(context)
       .from("foo")
       .select("foo", ["a"])
-      .orderBy("foo", "b", "asc")
+      .orderBy("foo", "a", "asc")
       .paginate(10, 5)
   ).toHaveProperty("info", {
     from: "foo",
     select: [{ table: "foo", columns: ["a"] }],
     join: [],
     where: [],
-    orderBy: { table: "foo", column: "b", direction: "asc" },
+    orderBy: { table: "foo", column: "a", direction: "asc" },
     distinct: false,
     paginate: { offset: 10, limit: 5 },
+    union: null,
   });
 });
 

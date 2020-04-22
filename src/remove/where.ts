@@ -11,8 +11,8 @@ export class WithWhere<
     column: TColumn,
     comparator: Comparator,
     value: TEntity[TColumn]
-  ): Where<TModel, Omit<TEntity, TColumn>> {
-    return new Where(this.context, {
+  ): DeleteWhere<TModel, Omit<TEntity, TColumn>> {
+    return new DeleteWhere(this.context, {
       ...this.info,
       where: [
         ...this.info.where,
@@ -22,9 +22,10 @@ export class WithWhere<
   }
 }
 
-class Where<TModel extends Model, TEntity extends Entity> extends Remove<
-  TModel
-> {}
-interface Where<TModel extends Model, TEntity extends Entity>
+export class DeleteWhere<
+  TModel extends Model,
+  TEntity extends Entity
+> extends Remove<TModel> {}
+export interface DeleteWhere<TModel extends Model, TEntity extends Entity>
   extends WithWhere<TModel, TEntity> {}
-applyMixins(Where, [WithWhere]);
+applyMixins(DeleteWhere, [WithWhere]);

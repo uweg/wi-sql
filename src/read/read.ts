@@ -35,7 +35,8 @@ export class ReadInfo<TModel extends Model> extends InfoBase<TModel> {
     public where: WhereInfo,
     public orderBy: OrderByInfo,
     public distinct: DistinctInfo,
-    public paginate: PaginateInfo
+    public paginate: PaginateInfo,
+    public union: ReadInfo<TModel> | null
   ) {
     super();
   }

@@ -63,6 +63,10 @@ export function access<T extends Model>(
       const result = await connection.query<{ result: number }>(query);
       return result[0].result;
     },
+    delete: async (info: RemoveInfo<T>) => {
+      const query = deleteQuery(info, accessInfo);
+      await connection.query(query);
+    },
   };
 }
 
@@ -190,6 +194,7 @@ export function listQuery<T extends Model>(
   // SELECT
   let result = `SELECT${info.distinct ? " DISTINCT" : ""}\n`;
   result += info.select
+    .filter((s) => s.columns.length > 0)
     .map((s) =>
       s.columns
         .map((c) => {
@@ -248,6 +253,10 @@ export function listQuery<T extends Model>(
     for (const where of wheres.slice(1)) {
       result += `\n  AND ${where}`;
     }
+  }
+
+  if (info.union !== null) {
+    result += `\nUNION (\n${listQuery(info.union, accessInfo)}\n)`;
   }
 
   if (info.orderBy !== null) {

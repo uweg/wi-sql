@@ -14,6 +14,10 @@ export class Remove<TModel extends Model> extends WithInfo<
   TModel,
   RemoveInfo<TModel>
 > {
+  go(): Promise<void> {
+    return this.context.delete(this.info);
+  }
+
   getInfo() {
     return this.info;
   }

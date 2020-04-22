@@ -4,6 +4,7 @@ import { WithInfo } from "../ready";
 import { WithOrderBy } from "./orderBy";
 import { WithDistinct } from "./distinct";
 import { ReadInfo, Read } from "./read";
+import { WithUnion } from "./union";
 
 export class WithSelect<
   TModel extends Model,
@@ -39,7 +40,8 @@ export interface Select<
   TSelected extends Model
 >
   extends WithSelect<TModel, T, TSelected>,
-    WithOrderBy<TModel, T, TSelected>,
-    WithDistinct<TModel, T, TSelected> {}
+    WithOrderBy<TModel, TSelected>,
+    WithDistinct<TModel, TSelected>,
+    WithUnion<TModel, T, TSelected> {}
 
-applyMixins(Select, [WithSelect, WithOrderBy, WithDistinct]);
+applyMixins(Select, [WithSelect, WithOrderBy, WithDistinct, WithUnion]);
