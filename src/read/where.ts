@@ -3,6 +3,7 @@ import { Model, Comparator } from "../sql2";
 import { WithSelect } from "./select";
 import { applyMixins } from "../helper";
 import { ReadInfo } from "./read";
+import { WithOr } from "./or";
 
 export class WithWhere<TModel extends Model, T extends Model> extends WithInfo<
   TModel,
@@ -21,17 +22,25 @@ export class WithWhere<TModel extends Model, T extends Model> extends WithInfo<
       ...this.info,
       where: [
         ...this.info.where,
-        { table: table, column: column, comparator: comparator, value: value },
+        [
+          {
+            table: table,
+            column: column,
+            comparator: comparator,
+            value: value,
+          },
+        ],
       ],
     });
   }
 }
 
-class Where<TModel extends Model, T extends Model> extends WithInfo<
+export class Where<TModel extends Model, T extends Model> extends WithInfo<
   TModel,
   ReadInfo<TModel>
 > {}
-interface Where<TModel extends Model, T extends Model>
+export interface Where<TModel extends Model, T extends Model>
   extends WithSelect<TModel, T, {}>,
-    WithWhere<TModel, T> {}
-applyMixins(Where, [WithSelect, WithWhere]);
+    WithWhere<TModel, T>,
+    WithOr<TModel, T> {}
+applyMixins(Where, [WithSelect, WithWhere, WithOr]);

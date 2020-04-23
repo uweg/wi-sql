@@ -13,12 +13,12 @@ type JoinInfo = {
   columnRight: string;
   type: JoinType;
 }[];
-type WhereInfo = {
+export type WhereInfo = {
   table: string;
   column: string;
   comparator: Comparator;
   value: any;
-}[];
+};
 type OrderByInfo = {
   table: string;
   column: string;
@@ -32,7 +32,7 @@ export class ReadInfo<TModel extends Model> extends InfoBase<TModel> {
     public from: FromInfo,
     public select: SelectInfo,
     public join: JoinInfo,
-    public where: WhereInfo,
+    public where: WhereInfo[][],
     public orderBy: OrderByInfo,
     public distinct: DistinctInfo,
     public paginate: PaginateInfo,

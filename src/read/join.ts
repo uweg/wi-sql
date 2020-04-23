@@ -1,10 +1,10 @@
-import { Model } from "../sql2";
+import { Model, Comparator } from "../sql2";
 import { WithInfo } from "../ready";
-import { Comparator } from "../sql";
 import { applyMixins } from "../helper";
 import { WithSelect } from "./select";
 import { WithWhere } from "./where";
 import { ReadInfo } from "./read";
+import { WithOr } from "./or";
 
 export class WithJoin<TModel extends Model, T extends Model> extends WithInfo<
   TModel,
@@ -102,5 +102,6 @@ class Join<TModel extends Model, T extends Model> extends WithInfo<
 interface Join<TModel extends Model, T extends Model>
   extends WithJoin<TModel, T>,
     WithSelect<TModel, T, {}>,
-    WithWhere<TModel, T> {}
-applyMixins(Join, [WithJoin, WithSelect, WithWhere]);
+    WithWhere<TModel, T>,
+    WithOr<TModel, T> {}
+applyMixins(Join, [WithJoin, WithSelect, WithWhere, WithOr]);

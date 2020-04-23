@@ -5,6 +5,7 @@ import { WithInfo } from "../ready";
 import { WithJoin } from "./join";
 import { WithWhere } from "./where";
 import { ReadInfo } from "./read";
+import { WithOr } from "./or";
 
 export class WithFrom<TModel extends Model> {
   constructor(protected context: Context<TModel>) {}
@@ -32,6 +33,7 @@ class From<TModel extends Model, T extends Model> extends WithInfo<
 interface From<TModel, T extends Model>
   extends WithSelect<TModel, T, {}>,
     WithJoin<TModel, T>,
-    WithWhere<TModel, T> {}
+    WithWhere<TModel, T>,
+    WithOr<TModel, T> {}
 
-applyMixins(From, [WithSelect, WithJoin, WithWhere]);
+applyMixins(From, [WithSelect, WithJoin, WithWhere, WithOr]);

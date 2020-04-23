@@ -77,6 +77,20 @@ WHERE
   [bar].[c_one] IS NULL`);
 });
 
+test("or where", () => {
+  const req = query(context)
+    .from("foo")
+    .or((q) => q.where("foo", "a", "=", 0).where("foo", "b", "=", "0"))
+    .select("foo", ["a"]);
+
+  expect(listQuery(req.getInfo(), model)).toEqual(`SELECT
+  [foo].[c_a] AS [foo__a]
+FROM 
+  [t_foo] AS [foo]
+WHERE
+  ([foo].[c_a] = 0 OR [foo].[c_b] = '0')`);
+});
+
 test("distinct", () => {
   const req = query(context).from("bar").select("bar", ["one"]).distinct();
 

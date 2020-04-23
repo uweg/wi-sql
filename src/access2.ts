@@ -253,23 +253,33 @@ export function listQuery<T extends Model>(
   if (info.where.length > 0) {
     result += `\nWHERE`;
 
-    const wheres = info.where.map((where) => {
-      let table = where.table;
-      const withAs = info.join.find((j) => j.as === table);
-      if (withAs !== undefined) {
-        table = withAs.tableLeft;
-      }
+    const wheres = info.where.map((w) => {
+      let r = w
+        .map((where) => {
+          let table = where.table;
+          const withAs = info.join.find((j) => j.as === table);
+          if (withAs !== undefined) {
+            table = withAs.tableLeft;
+          }
 
-      let r = `[${where.table}].[${
-        accessInfo[table].columns[where.column].name
-      }] `;
+          let r = `[${where.table}].[${
+            accessInfo[table].columns[where.column].name
+          }] `;
 
-      if (where.value === null) {
-        r += `IS${where.comparator === "=" ? "" : " NOT"} NULL`;
-      } else {
-        r += `${where.comparator} ${accessInfo[table].columns[
-          where.column
-        ].toSqlString(where.value)}`;
+          if (where.value === null) {
+            r += `IS${where.comparator === "=" ? "" : " NOT"} NULL`;
+          } else {
+            r += `${where.comparator} ${accessInfo[table].columns[
+              where.column
+            ].toSqlString(where.value)}`;
+          }
+
+          return r;
+        })
+        .join(" OR ");
+
+      if (w.length > 1) {
+        r = `(${r})`;
       }
 
       return r;

@@ -88,7 +88,7 @@ test("where", () => {
       from: "foo",
       select: [],
       join: [],
-      where: [{ table: "foo", column: "a", comparator: "=", value: 1 }],
+      where: [[{ table: "foo", column: "a", comparator: "=", value: 1 }]],
       orderBy: null,
       distinct: false,
       paginate: null,
