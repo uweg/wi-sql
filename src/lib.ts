@@ -3,6 +3,7 @@ export {
   IntColumn as AccessIntColumn,
   StringColumn as AccessStringColumn,
   NullableStringColumn as AccessNullableStringColumn,
+  NullableIntColumn as AccessNullableIntColumn,
   ColumnBase as AccessColumnBase,
   Connection as AccessConnection,
   ExtractModel as AccessExtractModel,
@@ -21,3 +22,5 @@ export { Select, WithSelect } from "./read/select";
 export { Union, WithUnion } from "./read/union";
 
 export { WithDistinct, Distinct } from "./read/distinct";
+
+export { Update, UpdateInfo } from "./update/update";

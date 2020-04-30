@@ -34,6 +34,12 @@ export class IntColumn extends ColumnBase<number> {
   }
 }
 
+export class NullableIntColumn extends ColumnBase<number | null> {
+  toSqlString(value: number | null) {
+    return value === null ? "NULL" : value.toString();
+  }
+}
+
 type AccessInfo<T extends Model> = {
   [table in keyof T]: {
     name: string;
@@ -71,6 +77,10 @@ export function access<T extends Model>(
     },
     delete: async (info: RemoveInfo<T>) => {
       const query = deleteQuery(info, accessInfo);
+      await connection.query(query);
+    },
+    update: async (info: UpdateInfo<T>) => {
+      const query = updateQuery(info, accessInfo);
       await connection.query(query);
     },
   };

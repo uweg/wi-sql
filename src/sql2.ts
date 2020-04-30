@@ -5,6 +5,7 @@ import { WithDelete } from "./remove/delete";
 import { WithUpdate } from "./update/_update";
 import { ReadInfo } from "./read/read";
 import { RemoveInfo } from "./remove/remove";
+import { UpdateInfo } from "./update/update";
 
 export type Entity = { [column: string]: any };
 export type Model = { [table: string]: Entity };
@@ -34,6 +35,7 @@ export type Context<TModel extends Model> = {
   ) => Promise<TResult | null>;
   count: (info: ReadInfo<TModel>) => Promise<number>;
   delete: (info: RemoveInfo<TModel>) => Promise<void>;
+  update: (info: UpdateInfo<TModel>) => Promise<void>;
 };
 
 export function dummyContext<T extends Model>(): Context<T> {
@@ -42,5 +44,6 @@ export function dummyContext<T extends Model>(): Context<T> {
     first: async () => null,
     count: async () => 0,
     delete: async () => {},
+    update: async () => {},
   };
 }

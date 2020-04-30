@@ -17,4 +17,8 @@ export class Update<TModel extends Model> extends WithInfo<
   getInfo() {
     return this.info;
   }
+
+  go(): Promise<void> {
+    return this.context.update(this.info);
+  }
 }
