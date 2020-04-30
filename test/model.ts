@@ -1,18 +1,9 @@
-import { StringColumn } from "../src/access";
+import { IntColumn, StringColumn, ExtractColumnType, NullableStringColumn } from "../src/access";
 
 export const model = {
   foo: {
-    name: "foo",
-    columns: {
-      a: new StringColumn("a", "a"),
-      b: new StringColumn("b", "b"),
-    },
+    name: "t_foo",
+    columns: { a: new IntColumn("c_a"), b: new NullableStringColumn("c_b") },
   },
-  bar: {
-    name: "bar",
-    columns: {
-      one: new StringColumn("one", "one"),
-      two: new StringColumn("two", "two"),
-    },
-  },
+  bar: { name: "t_bar", columns: { one: new NullableStringColumn("c_one") } },
 };

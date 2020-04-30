@@ -1,5 +1,5 @@
 import { WithInfo } from "../ready";
-import { Model, Direction } from "../sql2";
+import { Model, Direction } from "../sql";
 import { applyMixins } from "../helper";
 import { WithPaginate } from "./paginate";
 import { ReadInfo, Read } from "./read";

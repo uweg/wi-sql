@@ -1,4 +1,4 @@
-import { Model, Comparator } from "../sql2";
+import { Model, Comparator } from "../sql";
 import { WithInfo } from "../ready";
 import { applyMixins } from "../helper";
 import { WithSelect } from "./select";

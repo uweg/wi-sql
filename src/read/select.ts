@@ -1,4 +1,4 @@
-import { Model } from "../sql2";
+import { Model } from "../sql";
 import { applyMixins } from "../helper";
 import { WithInfo } from "../ready";
 import { WithOrderBy } from "./orderBy";

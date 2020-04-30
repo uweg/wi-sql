@@ -1,4 +1,4 @@
-import { Model } from "../sql2";
+import { Model } from "../sql";
 import { InfoBase, WithInfo } from "../ready";
 
 type InsertInfo = { table: string; values: { [column: string]: any } };

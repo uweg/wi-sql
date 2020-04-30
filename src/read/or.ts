@@ -1,4 +1,4 @@
-import { Model, Comparator } from "../sql2";
+import { Model, Comparator } from "../sql";
 import { ReadInfo, WhereInfo } from "./read";
 import { WithInfo } from "../ready";
 import { Where } from "./where";

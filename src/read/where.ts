@@ -1,5 +1,5 @@
 import { WithInfo } from "../ready";
-import { Model, Comparator } from "../sql2";
+import { Model, Comparator } from "../sql";
 import { WithSelect } from "./select";
 import { applyMixins } from "../helper";
 import { ReadInfo } from "./read";

@@ -1,5 +1,5 @@
 import { WithInfo } from "../ready";
-import { Model } from "../sql2";
+import { Model } from "../sql";
 import { ReadInfo, Read } from "./read";
 
 export class WithPaginate<

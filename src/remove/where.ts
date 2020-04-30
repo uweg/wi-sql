@@ -1,4 +1,4 @@
-import { Model, Comparator, Entity } from "../sql2";
+import { Model, Comparator, Entity } from "../sql";
 import { Remove, RemoveInfo } from "./remove";
 import { WithInfo } from "../ready";
 import { applyMixins } from "../helper";

@@ -1,4 +1,4 @@
-import { Model, Context } from "./sql2";
+import { Model, Context } from "./sql";
 import { ReadInfo } from "./read/read";
 
 export abstract class InfoBase<TModel extends Model> {}

@@ -1,4 +1,4 @@
-import { Model, Entity, Context } from "../sql2";
+import { Model, Entity, Context } from "../sql";
 import { UpdateInfo } from "./update";
 import { WithInfo } from "../ready";
 import { WithWhere } from "./where";

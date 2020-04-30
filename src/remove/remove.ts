@@ -1,4 +1,4 @@
-import { Model, Comparator } from "../sql2";
+import { Model, Comparator } from "../sql";
 import { InfoBase, WithInfo } from "../ready";
 
 type DeleteInfo = string;

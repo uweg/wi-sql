@@ -1,4 +1,4 @@
-import { Model, Context } from "../sql2";
+import { Model, Context } from "../sql";
 import { CreateInfo, Create } from "./create";
 
 export class WithInsert<TModel extends Model> {

@@ -7,9 +7,9 @@ export {
   ColumnBase as AccessColumnBase,
   Connection as AccessConnection,
   ExtractModel as AccessExtractModel,
-} from "./access2";
+} from "./access";
 
-export { query, Direction, Context, Model, Query } from "./sql2";
+export { query, Direction, Context, Model, Query } from "./sql";
 
 export { ReadInfo, Read } from "./read/read";
 

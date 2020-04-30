@@ -1,4 +1,4 @@
-import { query } from "../src/sql2";
+import { query } from "../src/sql";
 import {
   listQuery,
   deleteQuery,
@@ -8,8 +8,8 @@ import {
   Connection,
   countQuery,
   ExtractModel,
-} from "../src/access2";
-import { model } from "./model2";
+} from "../src/access";
+import { model } from "./model";
 
 const connection: Connection = { query: async () => [] };
 

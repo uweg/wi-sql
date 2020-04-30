@@ -1,4 +1,4 @@
-import { Model, Context } from "../sql2";
+import { Model, Context } from "../sql";
 import { WithSelect } from "./select";
 import { applyMixins } from "../helper";
 import { WithInfo } from "../ready";

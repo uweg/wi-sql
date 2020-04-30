@@ -1,4 +1,4 @@
-import { query, dummyContext } from "../src/sql2";
+import { query, dummyContext } from "../src/sql";
 
 const context = dummyContext();
 

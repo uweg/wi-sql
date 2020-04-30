@@ -1,6 +1,6 @@
 import { WithInfo } from "../ready";
 import { RemoveInfo } from "./remove";
-import { Model, Entity, Context } from "../sql2";
+import { Model, Entity, Context } from "../sql";
 import { WithWhere } from "./where";
 import { applyMixins } from "../helper";
 

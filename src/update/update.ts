@@ -1,4 +1,4 @@
-import { Model, Comparator } from "../sql2";
+import { Model, Comparator } from "../sql";
 import { InfoBase, WithInfo } from "../ready";
 
 type _UpdateInfo = { table: string; values: { [column: string]: any } };

@@ -1,4 +1,4 @@
-import { Model, Query } from "../sql2";
+import { Model, Query } from "../sql";
 import { Select } from "./select";
 import { Read, ReadInfo } from "./read";
 import { WithInfo } from "../ready";

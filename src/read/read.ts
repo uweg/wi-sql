@@ -1,4 +1,4 @@
-import { Comparator, Direction, Model } from "../sql2";
+import { Comparator, Direction, Model } from "../sql";
 import { InfoBase, WithInfo } from "../ready";
 
 type FromInfo = string;
