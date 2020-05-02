@@ -63,6 +63,24 @@ WHERE
   AND [as].[c_a] = 1`);
 });
 
+test("wherex", () => {
+  const req = query(context)
+    .from("bar")
+    .innerJoin("foo", "as", "b", "=", "bar", "one")
+    .xwhere("bar", "one", "<>", "as", "b")
+    .where("as", "a", "=", 1)
+    .select("bar", ["one"]);
+
+  expect(listQuery(req.getInfo(), model)).toEqual(`SELECT
+  [bar].[c_one] AS [bar__one]
+FROM (
+  [t_bar] AS [bar]
+  INNER JOIN [t_foo] AS [as] ON [as].[c_b] = [bar].[c_one])
+WHERE
+  [bar].[c_one] <> [as].[c_b]
+  AND [as].[c_a] = 1`);
+});
+
 test("where null", () => {
   const req = query(context)
     .from("bar")

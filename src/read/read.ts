@@ -13,12 +13,22 @@ type JoinInfo = {
   columnRight: string;
   type: JoinType;
 }[];
-export type WhereInfo = {
-  table: string;
-  column: string;
-  comparator: Comparator;
-  value: any;
-};
+export type WhereInfo =
+  | {
+      type: "value";
+      table: string;
+      column: string;
+      comparator: Comparator;
+      value: any;
+    }
+  | {
+      type: "reference";
+      table: string;
+      column: string;
+      comparator: Comparator;
+      tableX: string;
+      columnX: string;
+    };
 type OrderByInfo = {
   table: string;
   column: string;

@@ -276,12 +276,24 @@ export function listQuery<T extends Model>(
             accessInfo[table].columns[where.column].name
           }] `;
 
-          if (where.value === null) {
-            r += `IS${where.comparator === "=" ? "" : " NOT"} NULL`;
-          } else {
-            r += `${where.comparator} ${accessInfo[table].columns[
-              where.column
-            ].toSqlString(where.value)}`;
+          if (where.type === "value") {
+            if (where.value === null) {
+              r += `IS${where.comparator === "=" ? "" : " NOT"} NULL`;
+            } else {
+              r += `${where.comparator} ${accessInfo[table].columns[
+                where.column
+              ].toSqlString(where.value)}`;
+            }
+          } else if (where.type === "reference") {
+            let xtable = where.tableX;
+            const withAs = info.join.find((j) => j.as === xtable);
+            if (withAs !== undefined) {
+              xtable = withAs.tableLeft;
+            }
+
+            r += `${where.comparator} [${where.tableX}].[${
+              accessInfo[xtable].columns[where.columnX].name
+            }]`;
           }
 
           return r;

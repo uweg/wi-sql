@@ -40,10 +40,39 @@ class WithWhere<TModel extends Model, T extends Model> extends OrBase {
     return new OrWhere([
       ...this.info,
       {
+        type: "value",
         table: table,
         column: column,
         comparator: comparator,
         value: value,
+      },
+    ]);
+  }
+
+  xwhere<
+    TTable extends Extract<keyof T, string>,
+    TColumn extends Extract<keyof T[TTable], string>,
+    TTableX extends Extract<keyof T, string>,
+    TColumnX extends Extract<keyof T[TTableX], string>,
+    TComparator extends TModel[TTable][TColumn] extends T[TTableX][TColumnX]
+      ? Comparator
+      : never
+  >(
+    table: TTable,
+    column: TColumn,
+    comparator: TComparator,
+    tableX: TTableX,
+    columnX: TColumnX
+  ): OrWhere<TModel, T> {
+    return new OrWhere([
+      ...this.info,
+      {
+        type: "reference",
+        table: table,
+        column: column,
+        comparator: comparator,
+        tableX: tableX,
+        columnX: columnX,
       },
     ]);
   }

@@ -24,10 +24,44 @@ export class WithWhere<TModel extends Model, T extends Model> extends WithInfo<
         ...this.info.where,
         [
           {
+            type: "value",
             table: table,
             column: column,
             comparator: comparator,
             value: value,
+          },
+        ],
+      ],
+    });
+  }
+
+  xwhere<
+    TTable extends Extract<keyof T, string>,
+    TColumn extends Extract<keyof T[TTable], string>,
+    TTableX extends Extract<keyof T, string>,
+    TColumnX extends Extract<keyof T[TTableX], string>,
+    TComparator extends TModel[TTable][TColumn] extends T[TTableX][TColumnX]
+      ? Comparator
+      : never
+  >(
+    table: TTable,
+    column: TColumn,
+    comparator: TComparator,
+    tableX: TTableX,
+    columnX: TColumnX
+  ): Where<TModel, T> {
+    return new Where(this.context, {
+      ...this.info,
+      where: [
+        ...this.info.where,
+        [
+          {
+            type: "reference",
+            table: table,
+            column: column,
+            comparator: comparator,
+            tableX: tableX,
+            columnX: columnX,
           },
         ],
       ],
