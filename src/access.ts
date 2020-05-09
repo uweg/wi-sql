@@ -280,9 +280,11 @@ export function listQuery<T extends Model>(
             if (where.value === null) {
               r += `IS${where.comparator === "=" ? "" : " NOT"} NULL`;
             } else {
-              r += `${where.comparator} ${accessInfo[table].columns[
-                where.column
-              ].toSqlString(where.value)}`;
+              r += `${
+                where.comparator === "like" ? "ALIKE" : where.comparator
+              } ${accessInfo[table].columns[where.column].toSqlString(
+                where.value
+              )}`;
             }
           } else if (where.type === "reference") {
             let xtable = where.tableX;

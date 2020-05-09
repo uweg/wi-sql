@@ -18,7 +18,7 @@ const context = access(model, connection);
 test("select", () => {
   const res = query(context).from("bar").select("bar", ["one"]);
 
-  expect(listQuery(res.getInfo(), model)).toEqual(
+  expect(listQuery(res.info, model)).toEqual(
     `SELECT
   [bar].[c_one] AS [bar__one]
 FROM 
@@ -34,7 +34,7 @@ test("join", () => {
     .select("bar", ["one"])
     .select("as", ["a"]);
 
-  expect(listQuery(res.getInfo(), model)).toEqual(
+  expect(listQuery(res.info, model)).toEqual(
     `SELECT
   [bar].[c_one] AS [bar__one],
   [as].[c_a] AS [as__a]
@@ -53,7 +53,7 @@ test("where", () => {
     .where("as", "a", "=", 1)
     .select("bar", ["one"]);
 
-  expect(listQuery(req.getInfo(), model)).toEqual(`SELECT
+  expect(listQuery(req.info, model)).toEqual(`SELECT
   [bar].[c_one] AS [bar__one]
 FROM (
   [t_bar] AS [bar]
@@ -71,7 +71,7 @@ test("wherex", () => {
     .where("as", "a", "=", 1)
     .select("bar", ["one"]);
 
-  expect(listQuery(req.getInfo(), model)).toEqual(`SELECT
+  expect(listQuery(req.info, model)).toEqual(`SELECT
   [bar].[c_one] AS [bar__one]
 FROM (
   [t_bar] AS [bar]
@@ -87,12 +87,26 @@ test("where null", () => {
     .where("bar", "one", "=", null)
     .select("bar", ["one"]);
 
-  expect(listQuery(req.getInfo(), model)).toEqual(`SELECT
+  expect(listQuery(req.info, model)).toEqual(`SELECT
   [bar].[c_one] AS [bar__one]
 FROM 
   [t_bar] AS [bar]
 WHERE
   [bar].[c_one] IS NULL`);
+});
+
+test("where like", () => {
+  const req = query(context)
+    .from("bar")
+    .where("bar", "one", "like", "test")
+    .select("bar", ["one"]);
+
+  expect(listQuery(req.info, model)).toEqual(`SELECT
+  [bar].[c_one] AS [bar__one]
+FROM 
+  [t_bar] AS [bar]
+WHERE
+  [bar].[c_one] ALIKE 'test'`);
 });
 
 test("or where", () => {
@@ -101,7 +115,7 @@ test("or where", () => {
     .or((q) => q.where("foo", "a", "=", 0).where("foo", "b", "=", "0"))
     .select("foo", ["a"]);
 
-  expect(listQuery(req.getInfo(), model)).toEqual(`SELECT
+  expect(listQuery(req.info, model)).toEqual(`SELECT
   [foo].[c_a] AS [foo__a]
 FROM 
   [t_foo] AS [foo]
@@ -112,7 +126,7 @@ WHERE
 test("distinct", () => {
   const req = query(context).from("bar").select("bar", ["one"]).distinct();
 
-  expect(listQuery(req.getInfo(), model)).toEqual(`SELECT DISTINCT
+  expect(listQuery(req.info, model)).toEqual(`SELECT DISTINCT
   [bar].[c_one] AS [bar__one]
 FROM 
   [t_bar] AS [bar]`);
@@ -124,7 +138,7 @@ test("orderBy", () => {
     .select("bar", ["one"])
     .orderBy("bar", "one", "desc");
 
-  expect(listQuery(req.getInfo(), model)).toEqual(`SELECT * FROM (
+  expect(listQuery(req.info, model)).toEqual(`SELECT * FROM (
 SELECT
   [bar].[c_one] AS [bar__one]
 FROM 
@@ -139,7 +153,7 @@ test("paginate", () => {
     .orderBy("bar", "one", "desc")
     .paginate(10, 5);
 
-  expect(listQuery(req.getInfo(), model)).toEqual(`SELECT * FROM (
+  expect(listQuery(req.info, model)).toEqual(`SELECT * FROM (
 SELECT TOP 5 * FROM (
 SELECT TOP 15 * FROM (
 SELECT
@@ -157,7 +171,7 @@ test("delete", () => {
     .where("a", "=", 1)
     .where("b", "<>", null);
 
-  expect(deleteQuery(req.getInfo(), model)).toEqual(`DELETE FROM [t_foo]
+  expect(deleteQuery(req.info, model)).toEqual(`DELETE FROM [t_foo]
 WHERE
   [c_a] = 1
   AND [c_b] IS NOT NULL;`);
@@ -169,7 +183,7 @@ test("insert", () => {
     b: "a",
   });
 
-  expect(insertQuery(req.getInfo(), model)).toEqual(`INSERT INTO [t_foo] (
+  expect(insertQuery(req.info, model)).toEqual(`INSERT INTO [t_foo] (
   [c_a],
   [c_b]
 ) VALUES (
@@ -187,7 +201,7 @@ test("update", () => {
     .where("b", "=", null)
     .where("a", "=", 1);
 
-  expect(updateQuery(req.getInfo(), model)).toEqual(`UPDATE [t_foo]
+  expect(updateQuery(req.info, model)).toEqual(`UPDATE [t_foo]
 SET
   [c_a] = 1,
   [c_b] = 'd'
@@ -199,7 +213,7 @@ WHERE
 test("count", () => {
   const res = query(context).from("bar").select("bar", ["one"]);
 
-  expect(countQuery(res.getInfo(), model)).toEqual(
+  expect(countQuery(res.info, model)).toEqual(
     `SELECT COUNT(*) AS result FROM (
 SELECT
   [bar].[c_one] AS [bar__one]
@@ -215,7 +229,7 @@ test("union", () => {
     .select("bar", ["one"])
     .union((q) => q.from("bar").select("bar", ["one"]));
 
-  expect(listQuery(res.getInfo(), model)).toEqual(
+  expect(listQuery(res.info, model)).toEqual(
     `SELECT
   [bar].[c_one] AS [bar__one]
 FROM 

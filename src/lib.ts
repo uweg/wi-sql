@@ -24,3 +24,5 @@ export { Union, WithUnion } from "./read/union";
 export { WithDistinct, Distinct } from "./read/distinct";
 
 export { Update, UpdateInfo } from "./update/update";
+
+export { Where, WithWhere } from "./read/where";

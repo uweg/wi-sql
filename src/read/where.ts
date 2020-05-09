@@ -1,5 +1,5 @@
 import { WithInfo } from "../ready";
-import { Model, Comparator } from "../sql";
+import { Model, Comparator, ComparatorWithLike } from "../sql";
 import { WithSelect } from "./select";
 import { applyMixins } from "../helper";
 import { ReadInfo } from "./read";
@@ -11,11 +11,14 @@ export class WithWhere<TModel extends Model, T extends Model> extends WithInfo<
 > {
   where<
     TTable extends Extract<keyof T, string>,
-    TColumn extends Extract<keyof T[TTable], string>
+    TColumn extends Extract<keyof T[TTable], string>,
+    TComparator extends T[TTable][TColumn] extends string | null
+      ? ComparatorWithLike
+      : Comparator
   >(
     table: TTable,
     column: TColumn,
-    comparator: Comparator,
+    comparator: TComparator,
     value: T[TTable][TColumn]
   ): Where<TModel, T> {
     return new Where(this.context, {

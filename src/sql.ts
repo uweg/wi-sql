@@ -10,7 +10,8 @@ import { UpdateInfo } from "./update/update";
 export type Entity = { [column: string]: any };
 export type Model = { [table: string]: Entity };
 
-export type Comparator = "=" | "<>" | "<" | ">";
+export type Comparator = Exclude<ComparatorWithLike, "like">;
+export type ComparatorWithLike = "=" | "<>" | "<" | ">" | "like";
 
 export type Direction = "asc" | "desc";
 

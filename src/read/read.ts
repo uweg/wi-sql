@@ -1,4 +1,4 @@
-import { Comparator, Direction, Model } from "../sql";
+import { Comparator, Direction, Model, ComparatorWithLike } from "../sql";
 import { InfoBase, WithInfo } from "../ready";
 
 type FromInfo = string;
@@ -18,7 +18,7 @@ export type WhereInfo =
       type: "value";
       table: string;
       column: string;
-      comparator: Comparator;
+      comparator: ComparatorWithLike;
       value: any;
     }
   | {
@@ -66,9 +66,5 @@ export class Read<
 
   count(): Promise<number> {
     return this.context.count(this.info);
-  }
-
-  getInfo() {
-    return this.info;
   }
 }

@@ -16,7 +16,7 @@ export class WithUnion<
   ): Union<TModel, T, TSelected> {
     return new Union(this.context, {
       ...this.info,
-      union: query(new Query(this.context)).getInfo(),
+      union: query(new Query(this.context)).info,
     });
   }
 }
