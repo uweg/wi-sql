@@ -1,5 +1,5 @@
 import { Model, Context } from "./sql";
-import { ReadInfo } from "./read/read";
+import { ReadInfo, WhereInfo } from "./read/read";
 import { RemoveInfo } from "./remove/remove";
 import { CreateInfo } from "./create/create";
 import { UpdateInfo } from "./update/update";
@@ -242,21 +242,51 @@ export function listQuery<T extends Model>(
     accessInfo[info.from].name
   }] AS [${info.from}]`;
 
+  function where(w: WhereInfo[]) {
+    return w.map((where) => {
+      let table = where.table;
+      const withAs = info.join.find((j) => j.as === table);
+      if (withAs !== undefined) {
+        table = withAs.tableLeft;
+      }
+
+      let r = `[${where.table}].[${
+        accessInfo[table].columns[where.column].name
+      }] `;
+
+      if (where.type === "value") {
+        if (where.value === null) {
+          r += `IS${where.comparator === "=" ? "" : " NOT"} NULL`;
+        } else {
+          r += `${
+            where.comparator === "like" ? "ALIKE" : where.comparator
+          } ${accessInfo[table].columns[where.column].toSqlString(
+            where.value
+          )}`;
+        }
+      } else if (where.type === "reference") {
+        let xtable = where.tableX;
+        const withAs = info.join.find((j) => j.as === xtable);
+        if (withAs !== undefined) {
+          xtable = withAs.tableLeft;
+        }
+
+        r += `${where.comparator} [${where.tableX}].[${
+          accessInfo[xtable].columns[where.columnX].name
+        }]`;
+      }
+
+      return r;
+    });
+  }
+
   // JOIN
   for (const join of info.join) {
-    let table = join.tableRight;
-    const withAs = info.join.find((j) => j.as === table);
-    if (withAs !== undefined) {
-      table = withAs.tableLeft;
-    }
+    const w = where(join.where).join(" AND ")
 
     result += `\n  ${join.type === "inner" ? "INNER" : "LEFT"} JOIN [${
       accessInfo[join.tableLeft].name
-    }] AS [${join.as}] ON [${join.as}].[${
-      accessInfo[join.tableLeft].columns[join.columnLeft].name
-    }] ${join.comparator} [${join.tableRight}].[${
-      accessInfo[table].columns[join.columnRight].name
-    }])`;
+    }] AS [${join.as}] ON (${w}))`;
   }
 
   // WHERE
@@ -264,43 +294,9 @@ export function listQuery<T extends Model>(
     result += `\nWHERE`;
 
     const wheres = info.where.map((w) => {
-      let r = w
-        .map((where) => {
-          let table = where.table;
-          const withAs = info.join.find((j) => j.as === table);
-          if (withAs !== undefined) {
-            table = withAs.tableLeft;
-          }
+      
 
-          let r = `[${where.table}].[${
-            accessInfo[table].columns[where.column].name
-          }] `;
-
-          if (where.type === "value") {
-            if (where.value === null) {
-              r += `IS${where.comparator === "=" ? "" : " NOT"} NULL`;
-            } else {
-              r += `${
-                where.comparator === "like" ? "ALIKE" : where.comparator
-              } ${accessInfo[table].columns[where.column].toSqlString(
-                where.value
-              )}`;
-            }
-          } else if (where.type === "reference") {
-            let xtable = where.tableX;
-            const withAs = info.join.find((j) => j.as === xtable);
-            if (withAs !== undefined) {
-              xtable = withAs.tableLeft;
-            }
-
-            r += `${where.comparator} [${where.tableX}].[${
-              accessInfo[xtable].columns[where.columnX].name
-            }]`;
-          }
-
-          return r;
-        })
-        .join(" OR ");
+      let r = where(w).join(" OR ");
 
       if (w.length > 1) {
         r = `(${r})`;

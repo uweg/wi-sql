@@ -17,9 +17,9 @@ export class WithOr<TModel extends Model, T extends Model> extends WithInfo<
   ReadInfo<TModel>
 > {
   or(
-    query: (query: WithWhere<TModel, T>) => OrWhere<TModel, Model>
+    query: (query: WithOrWhere<TModel, T>) => OrWhere<TModel, Model>
   ): Where<TModel, T> {
-    const res = query(new WithWhere([]));
+    const res = query(new WithOrWhere([]));
     return new Where(this.context, {
       ...this.info,
       where: [...this.info.where, res.getInfo()],
@@ -27,7 +27,7 @@ export class WithOr<TModel extends Model, T extends Model> extends WithInfo<
   }
 }
 
-class WithWhere<TModel extends Model, T extends Model> extends OrBase {
+export class WithOrWhere<TModel extends Model, T extends Model> extends OrBase {
   where<
     TTable extends Extract<keyof T, string>,
     TColumn extends Extract<keyof T[TTable], string>
@@ -54,7 +54,7 @@ class WithWhere<TModel extends Model, T extends Model> extends OrBase {
     TColumn extends Extract<keyof T[TTable], string>,
     TTableX extends Extract<keyof T, string>,
     TColumnX extends Extract<keyof T[TTableX], string>,
-    TComparator extends TModel[TTable][TColumn] extends T[TTableX][TColumnX]
+    TComparator extends T[TTable][TColumn] extends T[TTableX][TColumnX]
       ? Comparator
       : never
   >(
@@ -78,7 +78,7 @@ class WithWhere<TModel extends Model, T extends Model> extends OrBase {
   }
 }
 
-class OrWhere<TModel extends Model, T extends Model> extends OrBase {}
-interface OrWhere<TModel extends Model, T extends Model>
-  extends WithWhere<TModel, T> {}
-applyMixins(OrWhere, [WithWhere]);
+export class OrWhere<TModel extends Model, T extends Model> extends OrBase {}
+export interface OrWhere<TModel extends Model, T extends Model>
+  extends WithOrWhere<TModel, T> {}
+applyMixins(OrWhere, [WithOrWhere]);

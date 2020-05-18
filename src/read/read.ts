@@ -7,11 +7,8 @@ type JoinType = "inner" | "left";
 type JoinInfo = {
   tableLeft: string;
   as: string;
-  columnLeft: string;
-  comparator: Comparator;
-  tableRight: string;
-  columnRight: string;
   type: JoinType;
+  where: WhereInfo[];
 }[];
 export type WhereInfo =
   | {

@@ -4,7 +4,7 @@ import { applyMixins } from "../helper";
 import { WithSelect } from "./select";
 import { WithWhere } from "./where";
 import { ReadInfo } from "./read";
-import { WithOr } from "./or";
+import { WithOr, OrWhere, WithOrWhere } from "./or";
 
 export class WithJoin<TModel extends Model, T extends Model> extends WithInfo<
   TModel,
@@ -12,20 +12,13 @@ export class WithJoin<TModel extends Model, T extends Model> extends WithInfo<
 > {
   innerJoin<
     TTableLeft extends Extract<keyof TModel, string>,
-    TColumnLeft extends Extract<keyof TModel[TTableLeft], string>,
-    TTableRight extends Extract<keyof T, string>,
-    TColumnRight extends Extract<keyof T[TTableRight], string>,
-    TComparator extends TModel[TTableLeft][TColumnLeft] extends T[TTableRight][TColumnRight]
-      ? Comparator
-      : never,
     TAs extends string
   >(
     tableLeft: TTableLeft,
     as: TAs,
-    columnLeft: TColumnLeft,
-    comparator: TComparator,
-    tableRight: TTableRight,
-    columnRight: TColumnRight
+    query: (
+      query: WithOrWhere<TModel, T & { [table in TAs]: TModel[TTableLeft] }>
+    ) => OrWhere<TModel, Model>
   ): Join<
     TModel,
     T &
@@ -33,19 +26,13 @@ export class WithJoin<TModel extends Model, T extends Model> extends WithInfo<
         [table in TAs]: TModel[TTableLeft];
       }
   > {
+    const res = query(new WithOrWhere([]));
+
     return new Join(this.context, {
       ...this.info,
       join: [
         ...this.info.join,
-        {
-          tableLeft: tableLeft,
-          as: as,
-          columnLeft: columnLeft,
-          comparator: comparator,
-          tableRight: tableRight,
-          columnRight: columnRight,
-          type: "inner",
-        },
+        { tableLeft: tableLeft, as: as, type: "inner", where: res.getInfo() },
       ],
     });
   }
@@ -62,10 +49,9 @@ export class WithJoin<TModel extends Model, T extends Model> extends WithInfo<
   >(
     tableLeft: TTableLeft,
     as: TAs,
-    columnLeft: TColumnLeft,
-    comparator: TComparator,
-    tableRight: TTableRight,
-    columnRight: TColumnRight
+    query: (
+      query: WithOrWhere<TModel, T & { [table in TAs]: TModel[TTableLeft] }>
+    ) => OrWhere<TModel, Model>
   ): Join<
     TModel,
     T &
@@ -77,6 +63,8 @@ export class WithJoin<TModel extends Model, T extends Model> extends WithInfo<
         };
       }
   > {
+    const res = query(new WithOrWhere([]));
+
     return new Join(this.context, {
       ...this.info,
       join: [
@@ -84,11 +72,8 @@ export class WithJoin<TModel extends Model, T extends Model> extends WithInfo<
         {
           tableLeft: tableLeft,
           as: as,
-          columnLeft: columnLeft,
-          comparator: comparator,
-          tableRight: tableRight,
-          columnRight: columnRight,
           type: "left",
+          where: res.getInfo(),
         },
       ],
     });

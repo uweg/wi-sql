@@ -33,7 +33,9 @@ test("select", () => {
 
 test("innerJoin", () => {
   expect(
-    query(context).from("foo").innerJoin("bar", "as", "one", "=", "foo", "b")
+    query(context)
+      .from("foo")
+      .innerJoin("bar", "as", (q) => q.xwhere("as", "one", "=", "foo", "bar"))
   ).toHaveProperty("info", {
     from: "foo",
     select: [],
@@ -41,10 +43,16 @@ test("innerJoin", () => {
       {
         tableLeft: "bar",
         as: "as",
-        columnLeft: "one",
-        comparator: "=",
-        tableRight: "foo",
-        columnRight: "b",
+        where: [
+          {
+            column: "one",
+            columnX: "bar",
+            comparator: "=",
+            table: "as",
+            tableX: "foo",
+            type: "reference",
+          },
+        ],
         type: "inner",
       },
     ],
@@ -58,7 +66,9 @@ test("innerJoin", () => {
 
 test("leftJoin", () => {
   expect(
-    query(context).from("foo").leftJoin("bar", "as", "one", "=", "foo", "b")
+    query(context)
+      .from("foo")
+      .leftJoin("bar", "as", (q) => q.xwhere("as", "one", "=", "foo", "b"))
   ).toHaveProperty("info", {
     from: "foo",
     select: [],
@@ -66,10 +76,16 @@ test("leftJoin", () => {
       {
         tableLeft: "bar",
         as: "as",
-        columnLeft: "one",
-        comparator: "=",
-        tableRight: "foo",
-        columnRight: "b",
+        where: [
+          {
+            column: "one",
+            columnX: "b",
+            comparator: "=",
+            table: "as",
+            tableX: "foo",
+            type: "reference",
+          },
+        ],
         type: "left",
       },
     ],
