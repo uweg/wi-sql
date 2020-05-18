@@ -319,24 +319,31 @@ export function listQuery<T extends Model>(
     result += `\nUNION (\n${listQuery(info.union, accessInfo)}\n)`;
   }
 
-  if (info.orderBy !== null) {
+  if (info.orderBy.length > 0) {
     // PAGINATE
     if (info.paginate !== null) {
       result = `SELECT TOP ${info.paginate.limit} * FROM (
 SELECT TOP ${info.paginate.offset + info.paginate.limit} * FROM (
 ${result}
-) ORDER BY [${info.orderBy.table}__${info.orderBy.column}] ${
-        info.orderBy.direction === "asc" ? "ASC" : "DESC"
+) ORDER BY [${info.orderBy[0].table}__${info.orderBy[0].column}] ${
+        info.orderBy[0].direction === "asc" ? "ASC" : "DESC"
       }
-) ORDER BY [${info.orderBy.table}__${info.orderBy.column}] ${
-        info.orderBy.direction === "asc" ? "DESC" : "ASC"
+) ORDER BY [${info.orderBy[0].table}__${info.orderBy[0].column}] ${
+        info.orderBy[0].direction === "asc" ? "DESC" : "ASC"
       }`;
     }
 
     // ORDER BY
-    result = `SELECT * FROM (\n${result}\n) ORDER BY [${info.orderBy.table}__${
-      info.orderBy.column
-    }] ${info.orderBy.direction === "asc" ? "ASC" : "DESC"}`;
+    result = `SELECT * FROM (\n${result}\n)\nORDER BY\n`;
+
+    result += info.orderBy
+      .map(
+        (orderBy) =>
+          `  [${orderBy.table}__${orderBy.column}] ${
+            orderBy.direction === "asc" ? "ASC" : "DESC"
+          }`
+      )
+      .join(",\n");
   }
 
   return result;

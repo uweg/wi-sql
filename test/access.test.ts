@@ -134,16 +134,21 @@ FROM
 
 test("orderBy", () => {
   const req = query(context)
-    .from("bar")
-    .select("bar", ["one"])
-    .orderBy("bar", "one", "desc");
+    .from("foo")
+    .select("foo", ["a", "b"])
+    .orderBy("foo", "a", "asc")
+    .orderBy("foo", "b", "desc");
 
   expect(listQuery(req.info, model)).toEqual(`SELECT * FROM (
 SELECT
-  [bar].[c_one] AS [bar__one]
+  [foo].[c_a] AS [foo__a],
+  [foo].[c_b] AS [foo__b]
 FROM 
-  [t_bar] AS [bar]
-) ORDER BY [bar__one] DESC`);
+  [t_foo] AS [foo]
+)
+ORDER BY
+  [foo__a] ASC,
+  [foo__b] DESC`);
 });
 
 test("paginate", () => {
@@ -162,7 +167,9 @@ FROM
   [t_bar] AS [bar]
 ) ORDER BY [bar__one] DESC
 ) ORDER BY [bar__one] ASC
-) ORDER BY [bar__one] DESC`);
+)
+ORDER BY
+  [bar__one] DESC`);
 });
 
 test("delete", () => {

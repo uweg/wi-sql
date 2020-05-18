@@ -17,7 +17,7 @@ export class WithFrom<TModel extends Model> {
       from: table,
       distinct: false,
       join: [],
-      orderBy: null,
+      orderBy: [],
       paginate: null,
       select: [],
       where: [],

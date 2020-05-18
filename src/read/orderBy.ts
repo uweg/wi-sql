@@ -18,7 +18,10 @@ export class WithOrderBy<
   ): OrderBy<TModel, TSelected> {
     return new OrderBy(this.context, {
       ...this.info,
-      orderBy: { table: table, column: column, direction: direction },
+      orderBy: [
+        ...this.info.orderBy,
+        { table: table, column: column, direction: direction },
+      ],
     });
   }
 }
@@ -28,5 +31,6 @@ class OrderBy<TModel extends Model, TSelected extends Model> extends Read<
   TSelected
 > {}
 interface OrderBy<TModel extends Model, TSelected extends Model>
-  extends WithPaginate<TModel, TSelected> {}
-applyMixins(OrderBy, [WithPaginate]);
+  extends WithPaginate<TModel, TSelected>,
+    WithOrderBy<TModel, TSelected> {}
+applyMixins(OrderBy, [WithPaginate, WithOrderBy]);

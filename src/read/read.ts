@@ -33,7 +33,7 @@ type OrderByInfo = {
   table: string;
   column: string;
   direction: Direction;
-} | null;
+}[];
 type DistinctInfo = boolean;
 type PaginateInfo = { offset: number; limit: number } | null;
 
