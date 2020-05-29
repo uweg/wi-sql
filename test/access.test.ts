@@ -29,8 +29,16 @@ FROM
 test("join", () => {
   const res = query(context)
     .from("bar")
-    .innerJoin("foo", "as", (q) => q.xwhere("as", "b", "=", "bar", "one"))
-    .leftJoin("foo", "as2", (q) => q.xwhere("as2", "b", "=", "as", "b"))
+    .innerJoin("foo", "as", "b", "=", "bar", "one")
+    .leftJoin(
+      (q) => q.from("foo").select("foo", ["b"]),
+      "foo",
+      "as2",
+      "b",
+      "=",
+      "as",
+      "b"
+    )
     .select("bar", ["one"])
     .select("as", ["a"]);
 
@@ -40,15 +48,20 @@ test("join", () => {
   [as].[c_a] AS [as__a]
 FROM ((
   [t_bar] AS [bar]
-  INNER JOIN [t_foo] AS [as] ON ([as].[c_b] = [bar].[c_one]))
-  LEFT JOIN [t_foo] AS [as2] ON ([as2].[c_b] = [as].[c_b]))`
+  INNER JOIN [t_foo] AS [as] ON [as].[c_b] = [bar].[c_one])
+  LEFT JOIN(
+    SELECT
+      [foo].[c_b] AS [foo__b]
+    FROM 
+      [t_foo] AS [foo]
+  ) AS [as2] ON [as2].[c_b] = [as].[c_b])`
   );
 });
 
 test("where", () => {
   const req = query(context)
     .from("bar")
-    .innerJoin("foo", "as", (q) => q.xwhere("as", "b", "=", "bar", "one"))
+    .innerJoin("foo", "as", "b", "=", "bar", "one")
     .where("bar", "one", "<>", "value")
     .where("as", "a", "=", 1)
     .select("bar", ["one"]);
@@ -57,7 +70,7 @@ test("where", () => {
   [bar].[c_one] AS [bar__one]
 FROM (
   [t_bar] AS [bar]
-  INNER JOIN [t_foo] AS [as] ON ([as].[c_b] = [bar].[c_one]))
+  INNER JOIN [t_foo] AS [as] ON [as].[c_b] = [bar].[c_one])
 WHERE
   [bar].[c_one] <> 'value'
   AND [as].[c_a] = 1`);
@@ -66,7 +79,7 @@ WHERE
 test("wherex", () => {
   const req = query(context)
     .from("bar")
-    .innerJoin("foo", "as", (q) => q.xwhere("as", "b", "=", "bar", "one"))
+    .innerJoin("foo", "as", "b", "=", "bar", "one")
     .xwhere("bar", "one", "<>", "as", "b")
     .where("as", "a", "=", 1)
     .select("bar", ["one"]);
@@ -75,7 +88,7 @@ test("wherex", () => {
   [bar].[c_one] AS [bar__one]
 FROM (
   [t_bar] AS [bar]
-  INNER JOIN [t_foo] AS [as] ON ([as].[c_b] = [bar].[c_one]))
+  INNER JOIN [t_foo] AS [as] ON [as].[c_b] = [bar].[c_one])
 WHERE
   [bar].[c_one] <> [as].[c_b]
   AND [as].[c_a] = 1`);
@@ -151,7 +164,7 @@ ORDER BY [foo__a] ASC,  [foo__b] DESC`);
 test("paginate", () => {
   const req = query(context)
     .from("bar")
-    .innerJoin("foo", "as", (q) => q.xwhere("as", "b", "=", "bar", "one"))
+    .innerJoin("foo", "as", "b", "=", "bar", "one")
     .select("as", ["a"])
     .orderBy("as", "a", "desc")
     .paginate(10, 5);
@@ -164,7 +177,7 @@ SELECT
   [as].[c_a] AS [as__a]
 FROM (
   [t_bar] AS [bar]
-  INNER JOIN [t_foo] AS [as] ON ([as].[c_b] = [bar].[c_one]))
+  INNER JOIN [t_foo] AS [as] ON [as].[c_b] = [bar].[c_one])
 ORDER BY [as].[c_a] DESC))
 ORDER BY [as__a] ASC))
 ORDER BY [as__a] DESC`);

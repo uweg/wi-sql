@@ -282,11 +282,28 @@ export function listQuery<T extends Model>(
 
   // JOIN
   for (const join of info.join) {
-    const w = where(join.where).join(" AND ");
+    let table = join.tableRight;
+    const withAs = info.join.find((j) => j.as === table);
+    if (withAs !== undefined) {
+      table = withAs.tableLeft;
+    }
 
-    result += `\n  ${join.type === "inner" ? "INNER" : "LEFT"} JOIN [${
-      accessInfo[join.tableLeft].name
-    }] AS [${join.as}] ON (${w}))`;
+    switch (join.type) {
+      case "inner":
+        result += `\n  INNER JOIN [${accessInfo[join.tableLeft].name}]`;
+        break;
+      case "left":
+        const q = listQuery(join.select, accessInfo);
+
+        result += `\n  LEFT JOIN(\n${q.replace(/^/gm,"    ")}\n  )`;
+        break;
+    }
+
+    result += ` AS [${join.as}] ON [${join.as}].[${
+      accessInfo[join.tableLeft].columns[join.columnLeft].name
+    }] ${join.comparator} [${join.tableRight}].[${
+      accessInfo[table].columns[join.columnRight].name
+    }])`;
   }
 
   // WHERE

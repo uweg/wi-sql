@@ -33,9 +33,7 @@ test("select", () => {
 
 test("innerJoin", () => {
   expect(
-    query(context)
-      .from("foo")
-      .innerJoin("bar", "as", (q) => q.xwhere("as", "one", "=", "foo", "bar"))
+    query(context).from("foo").innerJoin("bar", "as", "one", "=", "foo", "bar")
   ).toHaveProperty("info", {
     from: "foo",
     select: [],
@@ -43,16 +41,10 @@ test("innerJoin", () => {
       {
         tableLeft: "bar",
         as: "as",
-        where: [
-          {
-            column: "one",
-            columnX: "bar",
-            comparator: "=",
-            table: "as",
-            tableX: "foo",
-            type: "reference",
-          },
-        ],
+        columnLeft: "one",
+        comparator: "=",
+        tableRight: "foo",
+        columnRight: "bar",
         type: "inner",
       },
     ],
@@ -68,24 +60,37 @@ test("leftJoin", () => {
   expect(
     query(context)
       .from("foo")
-      .leftJoin("bar", "as", (q) => q.xwhere("as", "one", "=", "foo", "b"))
+      .leftJoin(
+        (q) => q.from("bar").select("bar", ["one"]),
+        "bar",
+        "as",
+        "one",
+        "=",
+        "foo",
+        "b"
+      )
+    // .leftJoin("bar", "as", (q) => q.xwhere("as", "one", "=", "foo", "b"))
   ).toHaveProperty("info", {
     from: "foo",
     select: [],
     join: [
       {
         tableLeft: "bar",
+        columnLeft: "one",
         as: "as",
-        where: [
-          {
-            column: "one",
-            columnX: "b",
-            comparator: "=",
-            table: "as",
-            tableX: "foo",
-            type: "reference",
-          },
-        ],
+        tableRight: "foo",
+        columnRight: "b",
+        comparator: "=",
+        select: {
+          distinct: false,
+          from: "bar",
+          join: [],
+          orderBy: [],
+          union: null,
+          where: [],
+          paginate: null,
+          select: [{ columns: ["one"], table: "bar" }],
+        },
         type: "left",
       },
     ],

@@ -3,13 +3,22 @@ import { InfoBase, WithInfo } from "../ready";
 
 type FromInfo = string;
 type SelectInfo = { table: string; columns: string[] }[];
-type JoinType = "inner" | "left";
-type JoinInfo = {
+type JoinInfo<TModel extends Model> = ({
   tableLeft: string;
   as: string;
-  type: JoinType;
-  where: WhereInfo[];
-}[];
+  columnLeft: string;
+  comparator: Comparator;
+  tableRight: string;
+  columnRight: string;
+} & (
+  | {
+      type: "inner";
+    }
+  | {
+      type: "left";
+      select: ReadInfo<TModel>;
+    }
+))[];
 export type WhereInfo =
   | {
       type: "value";
@@ -38,7 +47,7 @@ export class ReadInfo<TModel extends Model> extends InfoBase<TModel> {
   constructor(
     public from: FromInfo,
     public select: SelectInfo,
-    public join: JoinInfo,
+    public join: JoinInfo<TModel>,
     public where: WhereInfo[][],
     public orderBy: OrderByInfo,
     public distinct: DistinctInfo,
