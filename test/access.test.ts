@@ -144,32 +144,30 @@ SELECT
   [foo].[c_a] AS [foo__a],
   [foo].[c_b] AS [foo__b]
 FROM 
-  [t_foo] AS [foo]
-)
-ORDER BY
-  [foo__a] ASC,
-  [foo__b] DESC`);
+  [t_foo] AS [foo])
+ORDER BY [foo__a] ASC,  [foo__b] DESC`);
 });
 
 test("paginate", () => {
   const req = query(context)
     .from("bar")
-    .select("bar", ["one"])
-    .orderBy("bar", "one", "desc")
+    .innerJoin("foo", "as", (q) => q.xwhere("as", "b", "=", "bar", "one"))
+    .select("as", ["a"])
+    .orderBy("as", "a", "desc")
     .paginate(10, 5);
 
   expect(listQuery(req.info, model)).toEqual(`SELECT * FROM (
 SELECT TOP 5 * FROM (
+SELECT * FROM (
 SELECT TOP 15 * FROM (
 SELECT
-  [bar].[c_one] AS [bar__one]
-FROM 
+  [as].[c_a] AS [as__a]
+FROM (
   [t_bar] AS [bar]
-) ORDER BY [bar__one] DESC
-) ORDER BY [bar__one] ASC
-)
-ORDER BY
-  [bar__one] DESC`);
+  INNER JOIN [t_foo] AS [as] ON ([as].[c_b] = [bar].[c_one]))
+ORDER BY [as].[c_a] DESC))
+ORDER BY [as__a] ASC))
+ORDER BY [as__a] DESC`);
 });
 
 test("delete", () => {

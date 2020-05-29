@@ -282,7 +282,7 @@ export function listQuery<T extends Model>(
 
   // JOIN
   for (const join of info.join) {
-    const w = where(join.where).join(" AND ")
+    const w = where(join.where).join(" AND ");
 
     result += `\n  ${join.type === "inner" ? "INNER" : "LEFT"} JOIN [${
       accessInfo[join.tableLeft].name
@@ -294,8 +294,6 @@ export function listQuery<T extends Model>(
     result += `\nWHERE`;
 
     const wheres = info.where.map((w) => {
-      
-
       let r = where(w).join(" OR ");
 
       if (w.length > 1) {
@@ -318,28 +316,35 @@ export function listQuery<T extends Model>(
   if (info.orderBy.length > 0) {
     // PAGINATE
     if (info.paginate !== null) {
+      let table = info.orderBy[0].table;
+      const withAs = info.join.find((j) => j.as === table);
+      if (withAs !== undefined) {
+        table = withAs.tableLeft;
+      }
+
       result = `SELECT TOP ${info.paginate.limit} * FROM (
+SELECT * FROM (
 SELECT TOP ${info.paginate.offset + info.paginate.limit} * FROM (
 ${result}
-) ORDER BY [${info.orderBy[0].table}__${info.orderBy[0].column}] ${
-        info.orderBy[0].direction === "asc" ? "ASC" : "DESC"
-      }
-) ORDER BY [${info.orderBy[0].table}__${info.orderBy[0].column}] ${
+ORDER BY [${info.orderBy[0].table}].[${
+        accessInfo[table].columns[info.orderBy[0].column].name
+      }] ${info.orderBy[0].direction === "asc" ? "ASC" : "DESC"}))
+ORDER BY [${info.orderBy[0].table}__${info.orderBy[0].column}] ${
         info.orderBy[0].direction === "asc" ? "DESC" : "ASC"
-      }`;
+      })`;
     }
 
     // ORDER BY
-    result = `SELECT * FROM (\n${result}\n)\nORDER BY\n`;
+    result = `SELECT * FROM (\n${result})\nORDER BY`;
 
     result += info.orderBy
       .map(
         (orderBy) =>
-          `  [${orderBy.table}__${orderBy.column}] ${
+          ` [${orderBy.table}__${orderBy.column}] ${
             orderBy.direction === "asc" ? "ASC" : "DESC"
           }`
       )
-      .join(",\n");
+      .join(", ");
   }
 
   return result;

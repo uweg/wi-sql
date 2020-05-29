@@ -26,3 +26,7 @@ export { WithDistinct, Distinct } from "./read/distinct";
 export { Update, UpdateInfo } from "./update/update";
 
 export { Where, WithWhere } from "./read/where";
+
+export { WithPaginate } from "./read/paginate";
+
+export { WithOrderBy, OrderBy } from "./read/orderBy";

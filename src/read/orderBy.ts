@@ -26,11 +26,11 @@ export class WithOrderBy<
   }
 }
 
-class OrderBy<TModel extends Model, TSelected extends Model> extends Read<
+export class OrderBy<TModel extends Model, TSelected extends Model> extends Read<
   TModel,
   TSelected
 > {}
-interface OrderBy<TModel extends Model, TSelected extends Model>
+export interface OrderBy<TModel extends Model, TSelected extends Model>
   extends WithPaginate<TModel, TSelected>,
     WithOrderBy<TModel, TSelected> {}
 applyMixins(OrderBy, [WithPaginate, WithOrderBy]);
